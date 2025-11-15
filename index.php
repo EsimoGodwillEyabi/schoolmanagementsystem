@@ -71,8 +71,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
               <nav class="navigation1">
                  <ul>
                                         <li><a href="index.html">Home</a></li>
-                                        <li><a href="university.html">University</a></li>
-                                        <li><a href="#">Secondary & Primary</a></li>
                                         <li><a href="about_us.html">About Us</a></li>
                                         <li><a href="login.php" class="btn-success">login</a></li>
                                         <li><a href="admissionform.php" class="btn-success">Admission</a></li>

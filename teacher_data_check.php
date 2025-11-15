@@ -64,6 +64,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
    
     // Prepare and execute SQL query using prepared statement
     $sql = "INSERT INTO teaccher (teaccher_id, fullname, description, phone, email) VALUES (?, ?, ?, ?, ?)";
+    
 
     $stmt = mysqli_prepare($conn, $sql);
     if ($stmt) {

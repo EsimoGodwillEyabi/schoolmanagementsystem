@@ -11,6 +11,13 @@ if($_SESSION['usertype'] !== "student") {
     exit();
 }
 
+// Check if form was submitted (POST)
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    $_SESSION['error_message'] = "Invalid request method";
+    header("Location: register_course.php");
+    exit();
+}
+
 // Database connection
 $host = "localhost";
 $user = "root";
@@ -26,125 +33,89 @@ if (!$conn) {
     exit();
 }
 
-// Check if course was registered (POST)
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Expecting: student_id (hidden), course_code, year_id
-    $posted_student_id = isset($_POST['student_id']) ? (int) $_POST['student_id'] : null;
-    $raw_course = isset($_POST['course_code']) ? trim($_POST['course_code']) : null;
-    $raw_year = isset($_POST['year_id']) ? trim($_POST['year_id']) : null;
+// --- 1. RECEIVE AND VALIDATE INPUTS ---
+// The form (register_course.php) is now sending numeric IDs.
+$course_code = isset($_POST['course_code']) ? (int) $_POST['course_code'] : 0;
+$year_id = isset($_POST['year_id']) ? (int) $_POST['year_id'] : 0;
+$semester_id = isset($_POST['semester_id']) ? (int) $_POST['semester_id'] : 0;
 
-    // Normalize course_id: the form may send a course_id (int) or a course_code string
-    $course_code = null;
-    if ($raw_course !== null && $raw_course !== '') {
-        if (is_numeric($raw_course)) {
-            $course_code = (int) $raw_course;
-        } else {
-            // Lookup course_id by code or name
-            $cstmt = mysqli_prepare($conn, "SELECT course_code FROM coursse WHERE course_code = ? OR course_name = ? LIMIT 1");
-            if ($cstmt) {
-                mysqli_stmt_bind_param($cstmt, "ss", $raw_course, $raw_course);
-                mysqli_stmt_execute($cstmt);
-                mysqli_stmt_bind_result($cstmt, $found_course_id);
-                mysqli_stmt_fetch($cstmt);
-                mysqli_stmt_close($cstmt);
-                if (!empty($found_course_id)) {
-                    $course_code = (int) $found_course_id;
-                }
-            }
-        }
-    }
-
-    // Normalize year_id: form may send a year label (first_semester) instead of numeric id
-    $year_id = null;
-    if ($raw_year !== null && $raw_year !== '') {
-        if (is_numeric($raw_year)) {
-            $year_id = (int) $raw_year;
-        } else {
-            $ystmt = mysqli_prepare($conn, "SELECT year_id FROM accademic_years WHERE first_semester = ? OR second_semester = ? LIMIT 1");
-            if ($ystmt) {
-                mysqli_stmt_bind_param($ystmt, "ss", $raw_year, $raw_year);
-                mysqli_stmt_execute($ystmt);
-                mysqli_stmt_bind_result($ystmt, $found_year_id);
-                mysqli_stmt_fetch($ystmt);
-                mysqli_stmt_close($ystmt);
-                if (!empty($found_year_id)) {
-                    $year_id = (int) $found_year_id;
-                }
-            }
-        }
-    }
-
-    if (empty($course_code) || empty($year_id)) {
-        $_SESSION['error_message'] = "Please select a course and academic year.";
-        header("Location: register_course.php");
-        exit();
-    }
-
-    // Determine student id from session (ignore posted value for security)
-    $username = $_SESSION['username'];
-    $student_query = mysqli_prepare($conn, "SELECT user_id FROM user WHERE username = ? LIMIT 1");
-    if (!$student_query) {
-        $_SESSION['error_message'] = "Database error: " . mysqli_error($conn);
-        header("Location: register_course.php");
-        exit();
-    }
-    mysqli_stmt_bind_param($student_query, "s", $username);
-    mysqli_stmt_execute($student_query);
-    mysqli_stmt_bind_result($student_query, $student_id);
-    mysqli_stmt_fetch($student_query);
-    mysqli_stmt_close($student_query);
-
-    if (empty($student_id)) {
-        $_SESSION['error_message'] = "Could not determine your student account.";
-        header("Location: register_course.php");
-        exit();
-    }
-
-    // Prevent duplicate registration: same student, same course, same year
-    $check_sql = "SELECT COUNT(*) FROM studdent_course WHERE student_id = ? AND course_code = ? AND year_id = ?";
-    $check_stmt = mysqli_prepare($conn, $check_sql);
-    if (!$check_stmt) {
-        $_SESSION['error_message'] = "Database error: " . mysqli_error($conn);
-        header("Location: register_course.php");
-        exit();
-    }
-    mysqli_stmt_bind_param($check_stmt, "iii", $student_id, $course_code, $year_id);
-    mysqli_stmt_execute($check_stmt);
-    mysqli_stmt_bind_result($check_stmt, $cnt);
-    mysqli_stmt_fetch($check_stmt);
-    mysqli_stmt_close($check_stmt);
-
-    if ($cnt > 0) {
-        $_SESSION['error_message'] = "You are already registered for this course in the selected academic year.";
-        header("Location: register_course.php");
-        exit();
-    }
-
-    // Insert registration
-    $registration_date = date('Y-m-d H:i:s');
-    $insert_sql = "INSERT INTO studdent_course (student_id, course_code, year_id, semester) VALUES (?, ?, ?, ?)";
-    $insert_stmt = mysqli_prepare($conn, $insert_sql);
-    if (!$insert_stmt) {
-        $_SESSION['error_message'] = "Database error: " . mysqli_error($conn);
-        header("Location: register_course.php");
-        exit();
-    }
-    mysqli_stmt_bind_param($insert_stmt, "iiis", $student_id, $course_code, $year_id, $semester);
-    $ok = mysqli_stmt_execute($insert_stmt);
-    if ($ok) {
-        $_SESSION['success_message'] = "Course registration successful!";
-    } else {
-        $_SESSION['error_message'] = "Error registering for course: " . mysqli_stmt_error($insert_stmt);
-    }
-    mysqli_stmt_close($insert_stmt);
+if ($course_code === 0 || $year_id === 0 || $semester_id === 0) {
+    $_SESSION['error_message'] = "All required fields (Course, Academic Year, and Semester) must be selected.";
     mysqli_close($conn);
     header("Location: register_course.php");
     exit();
+}
 
-} else {
-    // If accessed directly without form submission
-    $_SESSION['error_message'] = "Invalid request method";
+// --- 2. SECURELY GET STUDENT ID FROM SESSION/DB ---
+$username = $_SESSION['username'];
+$student_id = null;
+$student_query = mysqli_prepare($conn, "SELECT user_id FROM user WHERE username = ? LIMIT 1");
+
+if ($student_query) {
+    mysqli_stmt_bind_param($student_query, "s", $username);
+    mysqli_stmt_execute($student_query);
+    mysqli_stmt_bind_result($student_query, $sid);
+    mysqli_stmt_fetch($student_query);
+    mysqli_stmt_close($student_query);
+    $student_id = $sid;
+}
+
+if (empty($student_id)) {
+    $_SESSION['error_message'] = "Could not determine your student account.";
+    mysqli_close($conn);
     header("Location: register_course.php");
     exit();
 }
+
+// --- 3. PREVENT DUPLICATE REGISTRATION ---
+// Check for same student, same course, same year, AND same semester
+$check_sql = "SELECT COUNT(*) FROM studdent_course WHERE student_id = ? AND course_code = ? AND year_id = ? AND semester_id = ?";
+$check_stmt = mysqli_prepare($conn, $check_sql);
+
+if (!$check_stmt) {
+    $_SESSION['error_message'] = "Database error (check prep): " . mysqli_error($conn);
+    mysqli_close($conn);
+    header("Location: register_course.php");
+    exit();
+}
+
+mysqli_stmt_bind_param($check_stmt, "iiii", $student_id, $course_code, $year_id, $semester_id); 
+mysqli_stmt_execute($check_stmt);
+mysqli_stmt_bind_result($check_stmt, $cnt);
+mysqli_stmt_fetch($check_stmt);
+mysqli_stmt_close($check_stmt);
+
+if ($cnt > 0) {
+    $_SESSION['error_message'] = "You are already registered for this course in the selected academic year and semester.";
+    mysqli_close($conn);
+    header("Location: register_course.php");
+    exit();
+}
+
+// --- 4. INSERT REGISTRATION INTO studdent_course TABLE (The requested action) ---
+$insert_sql = "INSERT INTO studdent_course (student_id, course_code, year_id, semester_id) VALUES (?, ?, ?, ?)";
+$insert_stmt = mysqli_prepare($conn, $insert_sql);
+
+if (!$insert_stmt) {
+    $_SESSION['error_message'] = "Database error (insert prep): " . mysqli_error($conn);
+    mysqli_close($conn);
+    header("Location: register_course.php");
+    exit();
+}
+
+mysqli_stmt_bind_param($insert_stmt, "iiii", $student_id, $course_code, $year_id, $semester_id); 
+$ok = mysqli_stmt_execute($insert_stmt);
+
+// --- 5. DISPLAY MESSAGE AND REDIRECT (The requested action) ---
+if ($ok) {
+    // This message will be displayed on register_course.php after redirect
+    $_SESSION['success_message'] = "**Course registration done successfully!**"; 
+} else {
+    $_SESSION['error_message'] = "Error registering for course: " . mysqli_stmt_error($insert_stmt);
+}
+
+mysqli_stmt_close($insert_stmt);
+mysqli_close($conn);
+header("Location: register_course.php");
+exit();
 ?>

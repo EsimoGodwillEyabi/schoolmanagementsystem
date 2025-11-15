@@ -159,7 +159,7 @@ if ($student_q) {
                     <input type="hidden" name="student_id" value="<?php echo htmlspecialchars($student_id); ?>">
                     <div>
                         <label for="course">Select Course</label>
-                        <select name="course_id" id="course" required>
+                        <select name="course_code" id="course_name" required>
                             <option value="">-- Select a Course --</option>
                             <?php foreach($courses as $course): ?>
                                 <option value="<?php echo htmlspecialchars($course['course_code']); ?>">
@@ -171,7 +171,7 @@ if ($student_q) {
                     </div>
                     <div>
                         <label for="accademic_year">Academic Year</label>
-                        <select name="year_id" id="accademic_year" required>
+                        <select name="year_id" id="year_id" required>
                             <option value="">-- Select Academic Year --</option>
                             <?php foreach($accademic_years as $ay): ?>
                                 <option value="<?php echo htmlspecialchars($ay['first_semester']); ?>">

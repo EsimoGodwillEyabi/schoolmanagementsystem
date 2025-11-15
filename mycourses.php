@@ -47,9 +47,8 @@ $course_sql = "
        course_code,
         course_name
     FROM teaccher_course
-    LEFT JOIN course N course_id = course_id
     WHERE teaccher_id = ?
-    ORDER BY course_id DESC
+    ORDER BY id DESC
 ";
 $course_stmt = mysqli_prepare($conn, $course_sql);
 if (!$course_stmt) {

@@ -7,13 +7,13 @@
 </head>
 <body>
      <header>
+
          <nav class="nav-admindashboard">
             <div>
                 <h1 class="nav-title-admin">Admin Dashboard</h1>
             </div>
             <div class="nav-links">
-                <ul>
-                
+               <ul>
                     <li><a  class="logout-box" href="logout.php">Logout</a></li>
                 </ul>
             </div>
@@ -35,6 +35,5 @@
                 <li><a href="view_class.php">View Class</a></li>
             </ul>
         </aside>
-    
 </body>
 </html>

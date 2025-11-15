@@ -17,7 +17,7 @@ $conn=mysqli_connect($host,$user,$password,$db);
 
 //Selecting data from mysql
 // Order by `user_id` (table uses `user_id` column) to avoid errors if `id` doesn't exist
-$sql = "SELECT * FROM user ORDER BY user_id DESC";
+$sql = "SELECT * FROM user WHERE usertype = 'student' ORDER BY user_id DESC";
 
 $result = mysqli_query($conn, $sql);
 

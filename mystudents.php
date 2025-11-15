@@ -22,7 +22,7 @@ if (!$conn) {
 
 //Selecting data from mysql
 // Order by `course_id` (table uses `course_id` column) to avoid errors if `id` doesn't exist
-$sql = "SELECT studdent_id FROM teaccher_course ORDER BY id DESC";
+$sql = "SELECT studdent_id FROM teaccher_course WHERE teaccher_id = 'FT2A2' ORDER BY id DESC";
 
 $result = mysqli_query($conn, $sql);
 
@@ -31,6 +31,13 @@ if (!$result) {
 }
 
 $count = mysqli_num_rows($result);
+
+// Assume $teacher_id holds the user username after successful login/input
+$teacher_id = $_POST['teacher_input'] ?? 'teacher'; // Example value
+
+// 2. Store the teacher_id in a session variable
+$_SESSION['teacher_id'] = $teacher_id;
+
 ?>
 
 <!DOCTYPE html>
@@ -69,7 +76,7 @@ $count = mysqli_num_rows($result);
                 
                 <table border="1px">
                     <tr>
-                        <th style="padding: 5px;">course_code</th>
+                        <th style="padding: 5px;">student_id</th>
                     </tr>
 
                     <?php
