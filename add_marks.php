@@ -41,7 +41,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_marks'])) {
     }
 }
 
-$sql = "SELECT * FROM marrks ORDER BY marrk_id DESC";
+$sql = "SELECT * FROM marrks WHERE teaccher_id = 'FT2A2'  ORDER BY marrk_id DESC";
 
 $result = mysqli_query($conn, $sql);
 

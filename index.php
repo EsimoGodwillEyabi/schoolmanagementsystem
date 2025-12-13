@@ -70,7 +70,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
        
               <nav class="navigation1">
                  <ul>
-                                        <li><a href="index.html">Home</a></li>
+                                        <li><a href="index.php">Home</a></li>
                                         <li><a href="about_us.html">About Us</a></li>
                                         <li><a href="login.php" class="btn-success">login</a></li>
                                         <li><a href="admissionform.php" class="btn-success">Admission</a></li>
@@ -94,20 +94,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <img src="assets\icons8-university-50.png" alt="Service 1">
                                     <h2>University management</h2>
                                     <p class= "pcontent2-sub">Access a wide range of courses and resources online. Designed to streamline administrative tasks, provide digital learning and secure data management.</p>
-                                    <div class="box"> Learn More </div>
+                                    <li><a href="about_us.html" class="box">Learn More</a></li>   
                                 </div>
+
                                 <div class="content2-sub2">
                                     <img src="assets\icons8-high-school-64.png" alt="Service 2">
                                     <h2>Secondary School</h2>
                                      <p class= "pcontent2-sub">A complete, integrated platform that handles report card generation, grade tracking, and all student-parent communication needs.</p>
-                                    <div class="box"> Learn More </div>
+                                     <li><a href="about_us.html" class="box">Learn More</a></li>
                                 </div>
+
                                 <div class="content2-sub3">
                                     <img src="assets\icons8-primary-school-48.png" alt="Service 3">
                                     <h2>Primary and Nursery</h2>
                                     <p class= "pcontent2-sub">  Gives administrators the ability to manage students smoothly and connect with parents promptly.</p>
-                                    <div class="box"> Learn More </div>
+                                    <li><a href="about_us.html" class="box">Learn More</a></li>
                                 </div>
+                                
                           </div>
     </section>
     <section class ="content3">

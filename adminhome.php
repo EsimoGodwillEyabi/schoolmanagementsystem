@@ -40,6 +40,33 @@ elseif($_SESSION['usertype'] !=="admin") {
             border-radius: 5px;
             margin: 40px;
         }
+    .teacher_profile_info {
+        display: flex;
+        }
+     .teacher_profile_details {
+        margin-bottom: 20px;
+        display: flex;
+        flex-direction: row;
+        gap: 100px;
+        }
+    .teacher_profile_details_item {
+        margin-left: 50px;
+        color: white;
+        background-color: #0476f8ff;
+        padding: 20px;
+        border-radius: 8px;
+        text-align: center;
+        width: 200px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+    .teacher_profile_details_item a {
+        text-decoration: none;
+        color: white;
+        }
+    .nav-title-admin a {
+        color: white;
+        text-decoration: none;
+    }
     </style>
 
 
@@ -77,32 +104,31 @@ elseif($_SESSION['usertype'] !=="admin") {
         </aside>
 
      <section class="content-admin">
-            <h2>Admin Dashboard</h2>
-
-        <div class = "flex_container">
-         <div>
-            <div class="admission">
-                 <h1 class="hadmission1"> 50 </h1>
-                <h1 class="hadmission"> Number Of Admissions </h1>
-            </div>
-
-             <div class="admission">
-                 <h1 class="hadmission1"> 50 </h1>
-                <h1 class="hadmission"> Number Of Students </h1>
-             </div>
-         <div>
-         <div>
-             <div class="admission">
-                 <h1 class="hadmission1"> 50 </h1>
-                <h1 class="hadmission"> Number Of Teachers </h1>
-            </div>
-
-            <div class="admission">
-                 <h1 class="hadmission1"> 50 </h1>
-                <h1 class="hadmission"> Number Of Classes </h1>
-            </div>
-         
-        </div>
+    <h2>Admin Dashboard</h2>
+        <section class="teacher_profile_info">   
+        <div class="teacher_profile_details">
+              <div>  
+                  <div class="teacher_profile_details_item">
+                    <h3> <a href="mycourses.php"> Number of Courses Assigned </a></h3>
+                    <p> 5 </p>
+                  </div> 
+                  <div class="teacher_profile_details_item">
+                    <h3> <a href="mystudents.php"> Number of Students Enrolled </a></h3>
+                    <p> 120 </p>   
+                   </div>
+              </div>
+              <div>
+                <div class="teacher_profile_details">
+                   <div class="teacher_profile_details_item">
+                    <h3> <a href="mycourses.php"> Number of Courses Assigned </a></h3>
+                    <p> 5 </p>
+                   </div> 
+                   <div class="teacher_profile_details_item">
+                    <h3> <a href="mystudents.php"> Number of Students Enrolled </a></h3>
+                    <p> 120 </p>  
+                    </div>
+                  </div>
+                 </div>
       </section>
     </main>
 

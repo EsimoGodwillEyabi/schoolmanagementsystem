@@ -85,7 +85,7 @@ $_SESSION['teacher_id'] = $teacher_id;
                     {
                     ?>    
                         
-                        <tr style="background-color: blue; max-width: 100px;">
+                        <tr style="max-width: 100px;">
                             <td style="padding: 5px;">
                                 <?php echo "{$info['studdent_id']}"; ?>
                             </td>

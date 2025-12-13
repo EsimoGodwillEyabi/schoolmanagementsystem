@@ -67,7 +67,6 @@ $count = mysqli_num_rows($result);
                         <th style="padding: 5px;">username</th>
                         <th style="padding: 5px;">phone</th>
                         <th style="padding: 5px;">email</th>
-                        <th style="padding: 5px;">password</th>
                     </tr>
 
                     <?php
@@ -84,9 +83,6 @@ $count = mysqli_num_rows($result);
                             </td>
                             <td style="padding: 5px;">
                                 <?php echo "{$info['email']}"; ?>
-                            </td>
-                            <td style="padding: 5px;">
-                                <?php echo "{$info['password']}"; ?>
                             </td>
                         </tr>
 
